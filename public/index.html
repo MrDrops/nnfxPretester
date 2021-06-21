@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>NNFX manual backtester</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="main-container">
+            <div class="title">
+                <header class="nnfx-title">NNFX Manual Backtester</header>
+            </div>
+            <div class="meta-trade-data-form">
+                <form method="POST" action="/meta-form" id="metaTradeForm" name="metaTradeForm">
+                    <fieldset id="meta-input-lock">
+                        <div>
+                            <label for="pair">Pair</label>
+                            <input type="text" id="pair" name="pair" placeholder="XXXXXX" size="6" maxlength="6">
+                        </div>
+                        <div class="period-container">
+                            <h4 class="period-title">Period</h4>
+                            <label for="period-start">Start</label>
+                            <input type="text" id="period-start" name="period_start" placeholder="ddmmyy" size="6" maxlength="6">
+                            <label for="period-end">End</label>
+                            <input type="text" id="period-end" name="period_end" placeholder="ddmmyy" size="6" maxlength="6">
+                        </div>
+                        <div>
+                            <label for="per-risk-trade">Risk per Trade %</label>
+                            <input type="text" id="per-risk-trade" name="risk_trade" placeholder="0.0" size="7" maxlength="5">
+                        </div>
+                        <div>
+                            <h4 class="indicators-title">Indicators</h4>
+                            <div>
+                                <input type="text" id="entry-indi" name="entry_indi" placeholder="Entry">
+                                <input type="text" id="entry-params" name="entry_params" placeholder="xx,xx,xx...">
+                            </div>
+                            <div>
+                                <input type="text" id="baseline-indi" name="bline_indi" placeholder="Baseline">
+                                <input type="text" id="baseline-params" name="bline_params" placeholder="xx,xx,xx...">
+                            </div>
+                            <div>
+                                <input type="text" id="exit-indi" name="exit_indi" placeholder="Exit">
+                                <input type="text" id="exit-params" name="exit_params" placeholder="xx,xx,xx...">
+                            </div>
+                            <div>
+                                <input type="text" id="volume-indi" name="vol_indi" placeholder="Volume">
+                                <input type="text" id="vol-params" name="vol_params" placeholder="xx,xx,xx...">
+                            </div>
+                            <div>
+                                <input type="text" id="confir2-indi" name="c2_indi" placeholder="Confirmation2">
+                                <input type="text" id="conf2-params" name="c2_params" placeholder="xx,xx,xx...">
+                            </div>
+                        </div>
+                        <div class="start-button-container">
+                            <button class="btn" id="start-test-btn" type="button" onclick="startTestBtn()">Start Test</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="current-trade-results">
+                <div class="profit-loss trade-result-in-box">
+                    <h4>Profit/loss</h4>
+                    <p class="counter"><span id="p-and-l">0</span>%</p>
+                </div>
+                <div class="max-drawdown trade-result-in-box">
+                    <h4>Max drawdown</h4>
+                    <p class="counter"><span id="max-down">0</span>%</p>
+                </div>
+            </div>
+            <div class="trade-input-form" id="trade-input-form">
+                <form method="POST" action="/tradeForm" id="tradeForm" name="tradeForm" onsubmit="return tradeSubmitValidator()">
+                    <fieldset id="trade-input-lock" disabled="disabled">
+                        <div>
+                            <label for="trade-date">Date</label>
+                            <input type="text" id="trade-date" name="trade_date" placeholder="ddmmyy" size="6" maxlength="6">
+                            <label for="entry-price" id="entry-price-label">Entry Price</label>
+                            <input type="text" id="entry-price" name="entry_price" placeholder="0.00" size="10" maxlength="10">
+                            <label id="atr-label-input" for="atr">ATR</label>
+                            <input type="text" id="atr" name="atr" placeholder="0.00" size="8" maxlength="8">
+                        </div>
+                        <div>
+                            <label for="exit-date">Exit Date</label>
+                            <input type="text" id="exit-date" name="exit_date" placeholder="ddmmyy" size="6" maxlength="6">
+                            <label id="exit-price-label"  for="exit-price">Exit Price</label>
+                            <input type="text" id="exit-price" name="exit_price" placeholder="0.00" size="10" maxlength="10">
+                        </div>
+                        <div>
+                            <label for="l-or-s">Long/Short</label>
+                            <select name="l_or_s" id="l-or-s">
+                                <option value="long">Long</option>
+                                <option value="short">Short</option>
+                            </select>
+                            <label class="option-tab-labels" for="hit-tp">Hit TP?</label>
+                            <select name="hit_tp" id="hit-tp">
+                                <option value="true">True</option>
+                                <option value="false">False</option>
+                            </select>
+                            <label class="option-tab-labels" for="hit-ls">Hit SL?</label>
+                            <select name="hit_ls" id="hit-ls">
+                                <option value="true">True</option>
+                                <option value="false">False</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="hi-price">High Price</label>
+                            <input type="text" id="hi-price" name="hi_price" placeholder="0.00" size="10" maxlength="10">
+                            <label class="sec-label-input" for="low-price">Low Price</label>
+                            <input type="text" id="low-price" name="low_price" placeholder="0.00" size="10" maxlength="10">
+                        </div>
+                        <div class="trade-btn">
+                            <button class="btn" id="submit-trade-btn" type="button" onclick="submitTradeClk()">Submit trade</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="process-data-buttons">
+                <button class="btn" type="button">Instructions</button> <!--prompts a new screen with instructions on how to use-->
+                <button class="btn" type="submit">Results</button> <!--Prompts detailed results for input trades-->
+                <button class="btn" type="button">Submit to Db & clear Form</button> <!--Saves to excel/server-->
+            </div>          
+            <div class="trade-table">
+                <table id="trade-table">
+                    <thead>
+                        <tr>
+                            <th>Trade #</th>
+                            <th>Date</th>
+                            <th>Long/Short</th>
+                            <th>Hit TP?</th>
+                            <th>Hit SL?</th> <!--If yes, it autofills Exit price-->
+                            <th>Points</th>
+                            <th>% Won/Loss</th>
+                            <th>X</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <script src="script.js" defer></script>
+    </body>
+</html>

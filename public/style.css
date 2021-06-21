@@ -1,0 +1,219 @@
+* {
+    border: 1px solid black;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 62.5%; /* this percentage makes 1rem equivalent to 10px and sets as base*/
+    width: 50rem;
+}
+
+body {
+    width: 50rem;
+}
+
+.main-container {
+    display: grid;
+    background-color: rgb(68,68,68);
+    overflow: hidden;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 2.5rem 210px 120px 2.5rem 1fr;
+    gap: 0.5rem;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.title {
+    margin-top:0.5rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    grid-column: 1 / 5;
+    grid-row: 1 / 2;
+    text-align: center;
+    background: rgb(6,114,128);
+    
+}
+
+.nnfx-title {
+    margin-top: 2px;
+    color: white;
+    font-weight: bold;
+
+}
+
+.meta-trade-data-form {
+    max-height: 205px;
+    grid-column: 1 / 4;
+    grid-row: 2 / 3;
+    margin-left: 0.5rem;
+    background-color: rgb(53,65,79);
+}
+
+.period-title {
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.current-trade-results {
+    max-height: 205px;
+    grid-column: 4 / 5;
+    grid-row: 2 / 3;
+    margin-right: 0.5rem;
+    text-align: center;
+    background-color: rgb(53,65,79);
+}
+
+.trade-input-form {
+    grid-column: 1 / 5;
+    grid-row: 3 / 4;
+    max-height: 120px;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    height: auto;
+    background-color: rgb(53,65,79);
+}
+
+.process-data-buttons {
+    grid-column: 1 / 5;
+    grid-row: 4 / 5;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    background-color: rgb(53,65,79);
+    text-align: right;
+}
+
+.trade-table {
+    grid-column: 1 / 5;
+    grid-row: 5 / 6;
+    min-height: 8rem;
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+    margin-bottom:0.5rem;
+    background-color: rgb(53,65,79);
+}
+
+.trade-result-in-box h4 {
+    margin: 0.5rem;
+    font-size: 1.3em;
+    color: white;
+}
+
+.trade-results-in-box span{
+    font-size: 2rem;
+}
+
+.max-drawdown {
+    margin-top : 2rem;
+}
+
+.counter {
+    font-size: 4.5rem;
+    color: white;
+}
+
+label {
+    font-weight: bold;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.indicators-title {
+    font-weight: bold;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+.start-button-container {
+    text-align: right;
+}
+
+.start-button-container input {
+    padding: 0.2rem;
+    font-weight: bold;   
+}
+
+.btn {
+    padding: 0.2rem;
+    font-weight: bold;
+}
+
+.period-container {
+    text-align: center;
+}
+
+.trade-btn {
+    text-align: center;
+}
+
+.trade-btn input {
+    padding-left: 5rem;
+    padding-right: 5rem;
+}
+
+th {
+    margin-left: 1.1rem;
+    margin-right: 1.1rem;
+    padding-left: 1.1rem;
+    padding-right: 1.1rem;
+    color: white;
+    font-weight: bold;
+}
+
+td {
+    color: white;
+    text-align: right;
+}
+
+#EraseTradeBtn {
+    margin-right: 0.4rem;
+    text-align: center;
+    color: red;
+    font-weight: bold;
+    width: 2rem;
+}
+
+.sec-label-input {
+    margin-left: 5rem;
+}
+
+.option-tab-labels {
+    margin-left: 5rem;
+}
+
+#atr-label-input {
+    margin-left: 2rem;
+}
+
+#trade-date {
+    margin-left: 2rem;
+}
+
+#atr {
+    margin-left: 2.5rem;
+}
+
+#entry-price-label {
+    margin-left : 2rem;
+}
+
+#exit-price-label {
+    margin-left : 2rem;
+}
+
+#base-label {
+    margin-left : 3rem;
+}
+
+#trade-conf-sign {
+    position: absolute;
+    margin-top: 3rem;
+    margin-left: 10rem;
+    width: 50%;
+    padding: 2rem;
+    background-color: aliceblue;
+    font-size: 2rem;
+    text-align: center;
+}

@@ -1,0 +1,16 @@
+{
+  "name": "nnfx_manual_backtester",
+  "version": "1.0.0",
+  "description": "back-end for strategy manual backtester",
+  "main": "backend-script.js",
+  "scripts": {
+    "start": "nodemon backend-script.js"
+  },
+  "author": "Drops",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.7"
+  }
+}
