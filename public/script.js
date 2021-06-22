@@ -47,27 +47,95 @@ function metaFormCallback() {
     document.getElementById("meta-input-lock").setAttribute("disabled", "disabled");
 };
 
-function metaValidator() {
-    function fixDates(inNum) {
-        let regPat = /\d{2}/g;
-        let strNum = inNum.toString();
-        let pairDate = strNum.match(regPat);
-        pairDate.reverse();
-        if (pairDate[0] > 0 && pairDate[0] < 30) {
-          pairDate[0] = '20' + pairDate[0];
-        } else {
-          pairDate[0] = '19' + pairDate[0];
-        }
-        return pairDate.join("-");
+//all input data validation functions
+function testPair(inPair) {
+    //const pairPattern = /\w{6}/i;
+    const pairs = ['usd', 'gbp', 'chf', 'eur', 'jpy', 'aud', 'cad', 'nzd'];
+    let err = false;
+    const base = inPair.slice(0,3);
+    const quote = inPair.slice(3,6);
+    let tof = pairs.includes(base) && pairs.includes(quote);
+    if (tof == false) {
+        err = true;
     };
+    return [err, "pair name"];
+};
 
-    function testPair(inPair) {
-        const pairs = ['usd', 'gbp', 'chf', 'eur', 'jpy', 'aud', 'cad', 'nzd'];
-        const base = inPair.slice(0,3);
-        const quote = inPair.slice(3,6);
-        return pairs.includes(base) && pairs.includes(quote);
-      };
+function testDates(inDate) {
+    const day = inDate.slice(0,2);
+    const month = inDate.slice(2,4);
+    const year = inDate.slice(4,6);
+    let err = false;
+    const datePattern = /\d{6}/;
 
+    if (datePattern.test(inDate) == false) {
+        err = true;
+    }
+    if (month < 1 || month > 12) {
+        err = true;
+    }
+    if (day < 1 || day > 31) {
+        err = true;
+    }
+    if ([1,3,5,7,8,10,12].includes(month) && day > 31) {
+        err = true;
+    }
+    if ([4, 6, 9, 11].includes(month) && day > 30) {
+        err = true;
+    }
+    if (month == 2 && day > 29) {
+        err = true;
+    }
+    
+    return [err, "start/end date"];
+}
+
+function fixDates(inDate) {
+    let regPat = /\d{2}/g;
+    let strNum = inDate.toString();
+    let pairDate = strNum.match(regPat);
+    pairDate.reverse();
+    if (pairDate[0] >= 0 && pairDate[0] < 50) {
+        pairDate[0] = '20' + pairDate[0];
+    } else {
+        pairDate[0] = '19' + pairDate[0];
+    }
+    return pairDate.join("-");
+};
+
+function testRisk(inRisk) {
+    const riskPattern = /\d/;
+    let err = false;
+    if (riskPattern.test(inRisk) == false) {
+        err = true;
+    }
+    if (inRisk > 2 || inRisk <= 0) {
+        err = true;
+    }
+    return [err, "risk per trade"];
+};
+
+function testIndis(inIndi) {
+    const paramsPattern = /\w+/;
+    let err = false;
+    if (inIndi.length > 0) {
+        if (paramsPattern.test(inIndi) == false) {
+            err = true;
+        };
+    };
+    return [err, "indicators/parameters"]
+};
+
+function testC1(inC1) {
+    const paramsPattern = /\w+/;
+    let err = false;
+    if (inC1.length == 0 || paramsPattern.test(inC1) == false) {
+            err = true;
+    };
+    return [err, "C1 indicator and/or parameter"]
+}
+
+function metaValidator() {
     const metaFormValues = {
         pairName : document.getElementById("pair").value,
         pStart : document.getElementById("period-start").value,
@@ -84,29 +152,39 @@ function metaValidator() {
         c2Indi : document.getElementById("confir2-indi").value,
         c2Params : document.getElementById("conf2-params").value,
     };
-    //required patterns
-    const pairPattern = /\w{6}/i;
-    const datePattern = /\d{6}/;
-    const riskPattern = /\d/;
-    const paramsPattern = /\w+/;
-    const maxRisk = 2;
-    const checks = {
-        pairNameCheck : pairPattern.test(metaFormValues.pairName) && testPair(metaFormValues.pairName),
-        startDateCheck :  datePattern.test(metaFormValues.pStart) && metaFormValues.pStart.length > 0,
-        endDateCheck : datePattern.test(metaFormValues.pEnd) && metaFormValues.pEnd.length > 0,
-        riskCheck : riskPattern.test(metaFormValues.percRisk) && (metaFormValues.percRisk <= maxRisk),
-        c1Check : metaFormValues.c1Indi.length > 0,
-        c1ParamCheck : paramsPattern.test(metaFormValues.c1Params),
-    };
-    for (let check in checks) {
-        console.log(checks);
-        if (checks[check] == false) {
-            console.log('FAILED');
-            window.alert('Please check your input');
-            return false;
+    const validTests = [
+        testPair(metaFormValues.pairName),
+        testDates(metaFormValues.pStart),
+        testDates(metaFormValues.pEnd),
+        testRisk(metaFormValues.percRisk),
+        testC1(metaFormValues.c1Indi),
+        testC1(metaFormValues.c1Params),
+        testIndis(metaFormValues.blineIndi),
+        testIndis(metaFormValues.blineParams),
+        testIndis(metaFormValues.exitIndi),
+        testIndis(metaFormValues.exitParams),
+        testIndis(metaFormValues.volIndi),
+        testIndis(metaFormValues.volParams),
+        testIndis(metaFormValues.c2Indi),
+        testIndis(metaFormValues.c2Params),
+    ];
+    let warnMsg = "";
+    let errCount = 0;
+
+    for (let i=0; i < validTests.length; i++) {
+        if (validTests[i][0] == true) {
+            warnMsg += '\n' + "- " + validTests[i][1];
+            errCount =+ 1;
         };
     };
-    //modify dates to be as db requires
+    if (errCount > 0) {
+        console.log('FAILED');
+        let msg = 'Please check your input:'.concat(warnMsg);
+        //console.log(msg);
+        window.alert(msg);
+        return false;
+    };
+
     console.log('validator checkpoint');
     metaFormCallback();
     metaFormValues.pStart = fixDates(metaFormValues.pStart);
@@ -115,6 +193,76 @@ function metaValidator() {
     console.log('YOU SHALL PASS');
     return metaFormValues;
 };
+
+// function oldValidator() {
+//     function fixDates(inNum) {
+//         let regPat = /\d{2}/g;
+//         let strNum = inNum.toString();
+//         let pairDate = strNum.match(regPat);
+//         pairDate.reverse();
+//         if (pairDate[0] > 0 && pairDate[0] < 30) {
+//           pairDate[0] = '20' + pairDate[0];
+//         } else {
+//           pairDate[0] = '19' + pairDate[0];
+//         }
+//         return pairDate.join("-");
+//     };
+
+//     function testPair(inPair) {
+//         const pairs = ['usd', 'gbp', 'chf', 'eur', 'jpy', 'aud', 'cad', 'nzd'];
+//         const base = inPair.slice(0,3);
+//         const quote = inPair.slice(3,6);
+//         return pairs.includes(base) && pairs.includes(quote);
+//       };
+
+//     const metaFormValues = {
+//         pairName : document.getElementById("pair").value,
+//         pStart : document.getElementById("period-start").value,
+//         pEnd : document.getElementById("period-end").value,
+//         percRisk : document.getElementById("per-risk-trade").value,
+//         c1Indi : document.getElementById("entry-indi").value,
+//         c1Params : document.getElementById("entry-params").value,
+//         blineIndi : document.getElementById("baseline-indi").value,
+//         blineParams : document.getElementById("baseline-params").value,
+//         exitIndi : document.getElementById("exit-indi").value,
+//         exitParams : document.getElementById("exit-params").value,
+//         volIndi : document.getElementById("volume-indi").value,
+//         volParams : document.getElementById("vol-params").value,
+//         c2Indi : document.getElementById("confir2-indi").value,
+//         c2Params : document.getElementById("conf2-params").value,
+//     };
+//     //required patterns
+//     const pairPattern = /\w{6}/i;
+//     const datePattern = /\d{6}/;
+//     const riskPattern = /\d/;
+//     const paramsPattern = /\w+/;
+//     const maxRisk = 2;
+
+//     const checks = {
+//         pairNameCheck : pairPattern.test(metaFormValues.pairName) && testPair(metaFormValues.pairName),
+//         startDateCheck :  datePattern.test(metaFormValues.pStart) && metaFormValues.pStart.length > 0,
+//         endDateCheck : datePattern.test(metaFormValues.pEnd) && metaFormValues.pEnd.length > 0,
+//         riskCheck : riskPattern.test(metaFormValues.percRisk) && (metaFormValues.percRisk <= maxRisk),
+//         c1Check : metaFormValues.c1Indi.length > 0,
+//         c1ParamCheck : paramsPattern.test(metaFormValues.c1Params),
+//     };
+//     for (let check in checks) {
+//         console.log(checks);
+//         if (checks[check] == false) {
+//             console.log('FAILED');
+//             window.alert('Please check your input');
+//             return false;
+//         };
+//     };
+//     //modify dates to be as db requires
+//     console.log('validator checkpoint');
+//     metaFormCallback();
+//     metaFormValues.pStart = fixDates(metaFormValues.pStart);
+//     metaFormValues.pEnd = fixDates(metaFormValues.pEnd);
+//     console.log(metaFormValues);
+//     console.log('YOU SHALL PASS');
+//     return metaFormValues;
+// };
 
 function startTestBtn() {
     const formData = metaValidator();
@@ -128,7 +276,6 @@ function startTestBtn() {
         console.log('post fajax post');
     };
 };
-
 
 function submitTradeClk() {
     const tradeData = tradeSubmitValidator();
@@ -198,7 +345,6 @@ function tradeSubmitValidator() {
         };
     }
 };
-
 
 function createTableRow(tradeData) {
     console.log("create table check");
