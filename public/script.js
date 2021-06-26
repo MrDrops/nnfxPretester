@@ -294,18 +294,6 @@ function submitTradeClk() {
 }
 
 function tradeSubmitValidator() {
-    function fixDates(inNum) {
-        let regPat = /\d{2}/g;
-        let strNum = inNum.toString();
-        let pairDate = strNum.match(regPat);
-        pairDate.reverse();
-        if (pairDate[0] > 0 && pairDate[0] < 30) {
-          pairDate[0] = '20' + pairDate[0];
-        } else {
-          pairDate[0] = '19' + pairDate[0];
-        }
-        return pairDate.join("-");
-    };
 
     const datePattern = /\d{6}/;
     const pricePattern = /\d/;
