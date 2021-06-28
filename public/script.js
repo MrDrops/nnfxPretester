@@ -58,6 +58,9 @@ function testPair(inPair) {
     if (tof == false) {
         err = true;
     };
+    if(base == quote) {
+        err = true;
+    };
     return [err, "pair name"];
 };
 
@@ -77,13 +80,13 @@ function testDates(inDate) {
     if (day < 1 || day > 31) {
         err = true;
     }
-    if ([1,3,5,7,8,10,12].includes(month) && day > 31) {
+    if ([1,3,5,7,8,10,12].includes(parseInt(month)) && day > 31) {
         err = true;
     }
-    if ([4, 6, 9, 11].includes(month) && day > 30) {
+    if ([4, 6, 9, 11].includes(parseInt(month)) && day > 30) {
         err = true;
     }
-    if (month == 2 && day > 29) {
+    if (parseInt(month) == 2 && day > 29) {
         err = true;
     }
     

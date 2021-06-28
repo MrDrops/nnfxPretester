@@ -55,13 +55,7 @@ app.post('/tradeForm', (req,res) => {
             console.log('trade data in db');
             res.status(200).json("trade Form server check");
         });
-    //const tradeValues = fixQuery.sortTradeData(tradeData);
-    //console.log(tradeValues);
-    // db.addTradeRow(tradeValues).then(()=>{
-    //     console.log('data in trade Table');
-    //     res.status(200).json("trade Form server check");
-    // });
-    //res.status(200).json("trade Form server check");
+
 });
 
 //let test;

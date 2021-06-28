@@ -6,50 +6,70 @@ const config = require('../config');
 
 //basic example get name of pair in test_id=1
 async function getPair() {
-    const result = await db.query(
-        'select pair from meta where test_id = 1', []
-    );
-    return result[0].pair;
+    try {
+        const result = await db.query(
+            'select pair from meta where test_id = 1', []
+        );
+        return result[0].pair;
+    } catch(err) {
+        console.error(err);
+    };    
 };
 
 async function getRisk() {
-    const result = await db.query(
-        'select risk_per from meta where test_id = 1', []
-    );
-    return result[0].risk_per;
-}
+    try {
+        const result = await db.query(
+            'select risk_per from meta where test_id = 1', []
+        );
+        return result[0].risk_per;
+    } catch(err) {
+        console.error(err);
+    };
+    
+};
+
 async function addMetaRow(strVal) {
-    //const push = 
-    await db.query(
-        //queryStr, []
-        `insert into meta (pair, period_start, period_end, risk_per, c1, baseline, exitIndi, volume, c2, c1_params, bline_params, exit_params, vol_params, c2_params) 
-        values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, strVal
-    );
-    //push;
+    try {
+        await db.query(
+            `insert into meta (pair, period_start, period_end, risk_per, c1, baseline, exitIndi, volume, c2, c1_params, bline_params, exit_params, vol_params, c2_params) 
+            values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`, strVal
+        );
+    } catch(err) {
+        console.error(err);
+    };
 };
 
 async function testId() {
-    const tradeId = await db.query(
-        'select test_id from meta order by test_id desc limit 1', []
-    );
-    return tradeId[0].test_id;
+    try {
+        const tradeId = await db.query(
+            'select test_id from meta order by test_id desc limit 1', []
+        );
+        return tradeId[0].test_id;
+    } catch(err) {
+        console.error(err);
+    }; 
 };
 
 async function restartCount() {
-    await db.query(
-        'alter table trades auto_increment = 1', []
-    );
-    console.log('auto_increment changed');
+    try {
+        await db.query(
+            'alter table trades auto_increment = 1', []
+        );
+        console.log('auto_increment changed');
+    } catch(err) {
+        console.error(err);
+    };
 };
 
 async function addTradeRow(strVals) {
-    //const strVal = strVals;
-    //console.log(strVal);
-    await db.query(
-        `insert into trades (test_id, date, entry_price, atr, exit_date, exit_price, long_short, hit_tp, hit_sl, hi_price, lo_price)
-        values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, strVals
-    );
-    //entry_price, atr, exit_date, exit_price, long_short, hit_tp, hit_sl, hi_price, lo_price
+    try {
+        await db.query(
+            `insert into trades (test_id, date, entry_price, atr, exit_date, exit_price, long_short, hit_tp, hit_sl, hi_price, lo_price)
+            values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, strVals
+        );
+    } catch(err) {
+        console.error(err);
+    };
 };
 
 module.exports = {
