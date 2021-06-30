@@ -183,7 +183,6 @@ function metaValidator() {
     if (errCount > 0) {
         console.log('FAILED');
         let msg = 'Please check your input:'.concat(warnMsg);
-        //console.log(msg);
         window.alert(msg);
         return false;
     };
@@ -294,7 +293,29 @@ function submitTradeClk() {
         tradeInputConfirm();
 
     }
-}
+};
+
+function newTradeSubmitValidator() {
+    const tradeData = {
+        entryDate : document.getElementById("trade-date").value,
+        entryPrice : parseFloat(document.getElementById("entry-price").value),
+        atr : parseFloat(document.getElementById("atr").value),
+        exitDate : document.getElementById("exit-date").value,
+        exitPrice : parseFloat(document.getElementById("exit-price").value),
+        lorS : document.getElementById("l-or-s").value,
+        hitTp : document.getElementById("hit-tp").value,
+        hitSl : document.getElementById("hit-ls").value,
+        hiPrice : parseFloat(document.getElementById("hi-price").value),
+        loPrice : parseFloat(document.getElementById("low-price").value),
+    };
+    const pair = document.getElementById("pair").value;
+    let errCount = 0;
+    let warnMsg = "";
+
+    let [enDateErr, exDateErr] = [testDates(tradeData.entryDate), testDates(tradeData.exitDate)];
+
+    
+};
 
 function tradeSubmitValidator() {
 
@@ -323,7 +344,8 @@ function tradeSubmitValidator() {
         hiPriceCheck : pricePattern.test(tradeData.hiPrice),
         loPriceCheck : pricePattern.test(tradeData.loPrice),
     };
-
+    console.log('current test');
+    console.log(typeof(tradeData.entryPrice));
     for (let check in checks) {
         if(checks[check] == false) {
             window.alert('Please check your input');
