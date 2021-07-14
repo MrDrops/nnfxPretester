@@ -41,31 +41,53 @@ async function addMetaRow(strVal) {
 
 async function testId() {
     try {
-        const tradeId = await db.query(
+        const testId = await db.query(
             'select test_id from meta order by test_id desc limit 1', []
         );
-        return tradeId[0].test_id;
+        return testId[0].test_id;
     } catch(err) {
         console.error(err);
     }; 
 };
 
-async function restartCount() {
+async function inTradePreTestId() {
     try {
-        await db.query(
-            'alter table trades auto_increment = 1', []
+        const testId = await db.query(
+            'select test_id from trades order by test_id desc limit 1', []
         );
-        console.log('auto_increment changed');
+        return testId[0].test_id;
     } catch(err) {
         console.error(err);
+    }; 
+};
+
+async function tradeId() {
+    try {
+        const tradeId = await db.query(
+            'select trade_id from trades order by test_id desc, trade_id desc limit 1', []
+        );
+        return tradeId[0].trade_id;
+    } catch(err) {
+        console.log(err);
     };
 };
+
+// async function restartCount() {
+//     try {
+//         await db.query(
+//             'alter table trades auto_increment = 1', []
+//         );
+//         console.log('auto_increment changed');
+//     } catch(err) {
+//         console.error(err);
+//     };
+// };
 
 async function addTradeRow(strVals) {
     try {
         await db.query(
-            `insert into trades (test_id, date, entry_price, atr, exit_date, exit_price, long_short, hit_tp, hit_sl, hi_price, lo_price)
-            values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, strVals
+            `insert into trades (test_id, trade_id, date, entry_price, atr, exit_date, exit_price, long_short, hit_tp, hit_sl, hi_price, lo_price)
+            values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, strVals
         );
     } catch(err) {
         console.error(err);
@@ -77,7 +99,9 @@ module.exports = {
     getRisk,
     addMetaRow,
     testId,
-    restartCount,
+    tradeId,
+    inTradePreTestId,
+    //restartCount,
     addTradeRow
 }
 

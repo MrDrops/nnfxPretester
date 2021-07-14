@@ -312,9 +312,9 @@ function newTradeSubmitValidator() {
     let errCount = 0;
     let warnMsg = "";
 
-    let [enDateErr, exDateErr] = [testDates(tradeData.entryDate), testDates(tradeData.exitDate)];
+    let enDateErr, exDateErr = [testDates(tradeData.entryDate), testDates(tradeData.exitDate)];
 
-    
+
 };
 
 function tradeSubmitValidator() {
@@ -440,7 +440,21 @@ function tradeInputConfirm() {
         document.getElementById('trade-date').focus();
     }, 750);
 
-}
+};
+
+function submitToDB() {
+    const confirm = window.confirm("Finalize test and clear form?\n (Data input is complete?)");
+    if(confirm == true) {
+        location.reload();
+    }; 
+};
+
+function resultButton() {
+    const confirm = window.confirm("Finalize test and go to results page?");
+    if(confirm == true) {
+        location.href = "http://localhost:3000/results.html";
+    };
+};
 
 // function calcResultsClk() {
 //     console.log();

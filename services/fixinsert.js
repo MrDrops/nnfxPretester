@@ -39,6 +39,7 @@ function sortMetaFormData(metaFormData) {
 function sortTradeData(tradeData) {
     const vals = {
         tid : tradeData.testId,
+        trid : tradeData.tradeId,
         dt : tradeData.entryDate,
         ep : tradeData.entryPrice,
         atr : tradeData.atr,
