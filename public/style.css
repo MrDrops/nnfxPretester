@@ -144,10 +144,6 @@ label {
     text-align: center;
 }
 
-.trade-btn {
-    text-align: center;
-}
-
 .trade-btn input {
     padding-left: 5rem;
     padding-right: 5rem;
@@ -216,4 +212,14 @@ td {
     background-color: aliceblue;
     font-size: 2rem;
     text-align: center;
+}
+
+#submit-trade-btn {
+    margin-left: 5rem;
+    margin-right: 5rem;
+}
+
+#tpp, #slp {
+    background-color: white;
+    font-size: 1.2rem;
 }

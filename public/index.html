@@ -86,27 +86,27 @@
                             <input type="text" id="atr" name="atr" placeholder="0.00" size="8" maxlength="8">
                         </div>
                         <div>
-                            <label for="exit-date">Exit Date</label>
-                            <input type="text" id="exit-date" name="exit_date" placeholder="ddmmyy" size="6" maxlength="6">
-                            <label id="exit-price-label"  for="exit-price">Exit Price</label>
-                            <input type="text" id="exit-price" name="exit_price" placeholder="0.00" size="10" maxlength="10">
-                        </div>
-                        <div>
                             <label for="l-or-s">Long/Short</label>
-                            <select name="l_or_s" id="l-or-s">
+                            <select name="l_or_s" id="l-or-s" onfocusout="autoTpSlPrices()">
                                 <option value="long">Long</option>
                                 <option value="short">Short</option>
                             </select>
                             <label class="option-tab-labels" for="hit-tp">Hit TP?</label>
-                            <select name="hit_tp" id="hit-tp">
-                                <option value="true">True</option>
-                                <option value="false">False</option>
+                            <select name="hit-tp" id="hit-tp">
+                                <option value="true">true</option>
+                                <option value="false">false</option>
                             </select>
-                            <label class="option-tab-labels" for="hit-ls">Hit SL?</label>
-                            <select name="hit_ls" id="hit-ls">
-                                <option value="true">True</option>
-                                <option value="false">False</option>
+                            <label class="option-tab-labels" for="hit-sl">Hit SL?</label>
+                            <select name="hit-sl" id="hit-sl">
+                                <option value="true">true</option>
+                                <option value="false">false</option>
                             </select>
+                        </div>
+                        <div>
+                            <label for="exit-date">Exit Date</label>
+                            <input type="text" id="exit-date" name="exit_date" placeholder="ddmmyy" size="6" maxlength="6">
+                            <label id="exit-price-label"  for="exit-price">Exit Price</label>
+                            <input type="text" id="exit-price" name="exit_price" placeholder="0.00" size="10" maxlength="10">
                         </div>
                         <div>
                             <label for="hi-price">High Price</label>
@@ -116,6 +116,8 @@
                         </div>
                         <div class="trade-btn">
                             <button class="btn" id="submit-trade-btn" type="button" onclick="submitTradeClk()">Submit trade</button>
+                            <span id="tpp"></span>
+                            <span id="slp"></span>
                         </div>
                     </fieldset>
                 </form>
@@ -141,8 +143,7 @@
                     </thead>
                 </table>
             </div>
-        </div>
-
+        </div>        
         <script src="script.js" defer></script>
     </body>
 </html>

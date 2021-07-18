@@ -1,6 +1,9 @@
 //contains the original script for front end before rewrite and cleanup
 
 function ajax(method, url, callbackF, sendObj="") {
+    /* 
+    Ajax example using older way. Not in use. Just to compare with fetch
+    */
     console.log('in ajax func');
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -20,6 +23,14 @@ function ajax(method, url, callbackF, sendObj="") {
 
 //ajax using fetch
 function fajax(method, url, data="") {
+    /* 
+    Universal use ajax function to connect to server, use any method and
+    relay data if needed
+    in:
+        method - str [GET, POST...]
+        url - str [/meta-form, etc]
+        data - str (optional) [for data transfer]
+    */
     if(data == false) {
         console.log('not a post or put method');
     } else {
@@ -43,13 +54,21 @@ function fajax(method, url, data="") {
 }
 
 function metaFormCallback() {
+    /* 
+    function called by Start Test button f() to "lock" Meta form
+    and "unlock" trade form
+    */
     document.getElementById("trade-input-lock").removeAttribute("disabled");
     document.getElementById("meta-input-lock").setAttribute("disabled", "disabled");
 };
 
 //all input data validation functions
 function testPair(inPair) {
-    //const pairPattern = /\w{6}/i;
+    /*
+    Called by validators to verify pair name input
+    in: str input forex pair (6chrs) from meta-trade-form
+    return: array [bool, str] 
+    */
     const pairs = ['usd', 'gbp', 'chf', 'eur', 'jpy', 'aud', 'cad', 'nzd'];
     let err = false;
     const base = inPair.slice(0,3);
@@ -65,6 +84,11 @@ function testPair(inPair) {
 };
 
 function testDates(inDate) {
+    /*
+    Called by validators to verify if date input are correct
+    in: str (6chrs) ddmmyy
+    return: array [bool, str]
+    */
     const day = inDate.slice(0,2);
     const month = inDate.slice(2,4);
     const year = inDate.slice(4,6);
@@ -94,6 +118,12 @@ function testDates(inDate) {
 }
 
 function fixDates(inDate) {
+    /*
+    fixes the str date input once verified to mysql friendly date
+    datatype
+    in: str 6(chrs) ddmmyy
+    return: str formatted in mySql date type style
+    */
     let regPat = /\d{2}/g;
     let strNum = inDate.toString();
     let pairDate = strNum.match(regPat);
@@ -107,6 +137,11 @@ function fixDates(inDate) {
 };
 
 function testRisk(inRisk) {
+    /*
+    called by validator to test risk input is within correct range
+    in: str risk value (float) per trade
+    return: array [bool, str]
+    */
     const riskPattern = /\d/;
     let err = false;
     if (riskPattern.test(inRisk) == false) {
@@ -119,6 +154,11 @@ function testRisk(inRisk) {
 };
 
 function testIndis(inIndi) {
+    /*
+    called by validator to test indicators input format
+    in: str indicator name/ parameters
+    return: array [bool, str]
+    */
     const paramsPattern = /\w+/;
     let err = false;
     if (inIndi.length > 0) {
@@ -130,6 +170,11 @@ function testIndis(inIndi) {
 };
 
 function testC1(inC1) {
+    /*
+    called by validator to test C1 indicators/parameters input format
+    in: str indicator name/ parameters
+    return: array [bool, str]
+    */
     const paramsPattern = /\w+/;
     let err = false;
     if (inC1.length == 0 || paramsPattern.test(inC1) == false) {
@@ -139,6 +184,11 @@ function testC1(inC1) {
 }
 
 function metaValidator() {
+    /*
+    Called by startTestBtn() to validate all the input form fields in
+    meta-trade-form
+    return: bool(false) || array (containing form values)
+    */
     const metaFormValues = {
         pairName : document.getElementById("pair").value,
         pStart : document.getElementById("period-start").value,
@@ -267,6 +317,10 @@ function metaValidator() {
 // };
 
 function startTestBtn() {
+    /*
+    Called by start-test-button to validate form data, submit data to DB
+    and unlock trade form
+    */
     const formData = metaValidator();
     console.log(formData);
     if (formData == false) {
@@ -280,19 +334,17 @@ function startTestBtn() {
 };
 
 function submitTradeClk() {
+    /*
+    called by submit trade button to call all needed functions to
+    validate and process trade input to send to DB
+    */
     const tradeData = tradeSubmitValidator();
     if (tradeData != false) {
         createTableRow(tradeData);
-        console.log(tradeData);
-        console.log('end of test');
         fajax('POST', '/tradeForm', tradeData);
-        //get data from form
-        //send data to server
-        //clear trade form
         document.getElementById('tradeForm').reset()
         tradeInputConfirm();
-
-    }
+    };
 };
 
 function newTradeSubmitValidator() {
@@ -313,12 +365,14 @@ function newTradeSubmitValidator() {
     let warnMsg = "";
 
     let enDateErr, exDateErr = [testDates(tradeData.entryDate), testDates(tradeData.exitDate)];
-
-
 };
 
 function tradeSubmitValidator() {
-
+    /*
+    called by submitTradeClk() to validate trade input form values
+    before submitting to DB
+    return: bool(false) || array (validated trade values)
+    */
     const datePattern = /\d{6}/;
     const pricePattern = /\d/;
 
@@ -330,7 +384,7 @@ function tradeSubmitValidator() {
         exitPrice : document.getElementById("exit-price").value,
         lorS : document.getElementById("l-or-s").value,
         hitTp : document.getElementById("hit-tp").value,
-        hitSl : document.getElementById("hit-ls").value,
+        hitSl : document.getElementById("hit-sl").value,
         hiPrice : document.getElementById("hi-price").value,
         loPrice : document.getElementById("low-price").value,
     };
@@ -344,8 +398,6 @@ function tradeSubmitValidator() {
         hiPriceCheck : pricePattern.test(tradeData.hiPrice),
         loPriceCheck : pricePattern.test(tradeData.loPrice),
     };
-    console.log('current test');
-    console.log(typeof(tradeData.entryPrice));
     for (let check in checks) {
         if(checks[check] == false) {
             window.alert('Please check your input');
@@ -354,14 +406,36 @@ function tradeSubmitValidator() {
             console.log('submit trade check');
             tradeData.entryDate = fixDates(tradeData.entryDate);
             tradeData.exitDate = fixDates(tradeData.exitDate);
+            document.getElementById("tpp").innerHTML = "";
+            document.getElementById("slp").innerHTML = "";
             return tradeData;
         };
     }
 };
 
+function autoTpSlPrices() {
+    const lors = document.getElementById("l-or-s").value;
+    const entryPrice = parseFloat(document.getElementById("entry-price").value);
+    const atr = parseFloat(document.getElementById("atr").value);
+    let tpp;
+    let slp;
+    if(lors == "long") {
+        tpp = entryPrice + atr;
+        slp = entryPrice - (1.5 * atr);
+    } else {
+        tpp = entryPrice - atr;
+        slp = entryPrice + (1.5 * atr);
+    };
+    document.getElementById("tpp").innerHTML = "Take profit: " + tpp;
+    document.getElementById("slp").innerHTML = "Stop loss: " + slp;
+}
+
 function createTableRow(tradeData) {
+    /*
+    Create an html table in front-end of basic trade input data after it
+    has been sent to the DB
+    */
     console.log("create table check");
-    
     const table = document.getElementById("trade-table");
     let rowNum = table.rows.length;
     let row = table.insertRow(1);
@@ -378,6 +452,10 @@ function createTableRow(tradeData) {
     ErBtn.setAttribute("id", "EraseTradeBtn");
 
     function calcPoints() {
+        /*
+        calculates each trade's account percentage and drawdown
+        return: array [float, float] (account, drawdown)
+        */
         let ans;
         const risk = parseFloat(document.getElementById("per-risk-trade").value);
         let atr = parseFloat(tradeData.atr)
@@ -386,19 +464,18 @@ function createTableRow(tradeData) {
         if (tradeData.lorS == "long") {
             if (tradeData.hitTp == "true") {
                 ans = atr + (exitPrice - entryPrice)
-                console.log('path a');
+                //console.log('path a');
             } else {
                 ans = (exitPrice - entryPrice) * 2;
-                console.log('test path b');
-                console.log(ans);
+                //console.log('test path b');
             }
         } else {
             if (tradeData.hitTp == "true") {
                 ans = atr + (entryPrice - exitPrice)
-                console.log('path c');
+                //console.log('path c');
             } else {
                 ans = (entryPrice - exitPrice) * 2;
-                console.log('path d');
+                //console.log('path d');
             }
         };
         const accPer = ans > 0 ? ans / (1.5 * atr * 2) * risk * 2 : (Math.abs(ans) / (1.5 * atr * 2)) * risk * 2 * -1;
@@ -411,16 +488,12 @@ function createTableRow(tradeData) {
     tdHitTp.innerHTML = tradeData.hitTp;
     tdHitSl.innerHTML = tradeData.hitSl;
     [tdProfit.innerHTML, tdAccPer.innerHTML] = calcPoints();
-    //tdAccPer.innerHTML = calcPoints()[1];
     tdErase.appendChild(ErBtn);
     //updates current trade results
     let pyl = parseFloat(document.getElementById("p-and-l").innerHTML);
     let maxDown = parseFloat(document.getElementById("max-down").innerHTML);
     pyl = pyl + parseFloat(tdAccPer.innerHTML);
-    console.log(pyl);
-    console.log(maxDown);
     document.getElementById("p-and-l").innerHTML = pyl.toFixed(1);
-    console.log(pyl);
     if (pyl < 0) {
         if (pyl < maxDown) {
             document.getElementById("max-down").innerHTML = pyl.toFixed(1);
@@ -429,6 +502,10 @@ function createTableRow(tradeData) {
 };
 
 function tradeInputConfirm() {
+    /*
+    called by submitTradeClk(). Pops up msg confirming trade was
+    submitted to db
+    */
     const tradeArea = document.getElementById("meta-input-lock");
     const confirmSign = document.createElement("div");
     const text = document.createTextNode("Trade data submitted");
@@ -443,6 +520,9 @@ function tradeInputConfirm() {
 };
 
 function submitToDB() {
+    /*
+    Pops up confirmation msg to finalize current test and reload forms for new test
+    */
     const confirm = window.confirm("Finalize test and clear form?\n (Data input is complete?)");
     if(confirm == true) {
         location.reload();
@@ -450,30 +530,12 @@ function submitToDB() {
 };
 
 function resultButton() {
+    /*
+    Pops up confirmation msg to finalize current test and go to current
+    test result page
+    */
     const confirm = window.confirm("Finalize test and go to results page?");
     if(confirm == true) {
         location.href = "http://localhost:3000/results.html";
     };
 };
-
-// function calcResultsClk() {
-//     console.log();
-//     //takes all input data in table and returns a bottom div with
-//     //results:
-//     //total trades  win loss    0-loss  profit/loss%    Max drawdown
-// };
-
-// function instrucClk() {
-//     console.log();
-//     //prompts a popup explaining how to use manual backtester
-// };
-
-// function saveDataClk() {
-//     console.log();
-//     //saves metadata, trade data and results to excel/server
-// };
-
-// function clearResetClk() {
-//     console.log();
-//     //clears all metadata and trade data to start a new backtest
-// };

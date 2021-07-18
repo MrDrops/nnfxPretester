@@ -1,10 +1,7 @@
 const express = require('express');
 const path = require('path');
-const mysql = require('mysql2');
 const db = require('./services/dbqueries');
 const fixQuery = require('./services/fixinsert');
-//const db = require('./database');
-
 
 var PORT = process.env.port || 3000;
 
@@ -18,63 +15,36 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 //Routes
 app.post('/meta-form', (req, res) => {
-    //console.log(req.headers);
-    //console.log(req.body);
+    /*
+    receives input from meta-form and passes it to meta table in DB
+    */
     const metaFormData = req.body;
     const metaValues = fixQuery.sortMetaFormData(metaFormData);
-    //console.log(metaValues);
     db.addMetaRow(metaValues).then(()=>{
-        //db.restartCount();
         console.log('meta data in db');
         res.status(200).json('it worked');
     });
 });
 
-app.post('/tradeFormOld', (req,res) => {
-    console.log('trade data from req.body');
-    console.log(req.body);
-    const tradeData = db.testId(1)
-        .then(id=> {
-            let td = req.body;
-            console.log('inside .then');
-            console.log(id);
-            td.testId = id;
-            console.log('________');
-            console.log(td);
-            return td;
-        });
-    tradeData.then((td)=> {
-            const sortedTd = fixQuery.sortTradeData(td);
-            console.log(sortedTd);
-            db.addTradeRow(sortedTd);
-        })
-        .then(()=> {
-            console.log('trade data in db');
-            res.status(200).json("trade Form server check");
-        });
-});
-
 app.post('/tradeForm', (req,res) => {
+    /*
+    receives input from trade form, curates it, passes it to DB
+    */
     const preTestId = db.inTradePreTestId();
-    //const inTradeTestId = db.inTradeTestId();
     const testId = db.testId();
-    //const preTradeId = db.preTradeId();
     const tradeId = db.tradeId();
 
     const allIds = Promise.all([preTestId, testId, tradeId])
     .then(ids => {
+        //checks & sets testId & tradeId, adds it to the trade data
         let td = req.body;
-        //console.log('current test');
-        //console.log(ids);
-        //console.log(ids[2]);
-        //console.log(ids[0] < ids[1]);
         td.testId = ids[1];
         td.tradeId = ids[0] < ids[1] ? 1 : (ids[2] + 1);
         return td;
     })
     .then((td)=> {
+        //organizes trade data to match MySql table's datatypes. Sends data to DB
         const sortedTd = fixQuery.sortTradeData(td);
-        console.log(sortedTd);
         db.addTradeRow(sortedTd);
     })
     .then(()=> {
